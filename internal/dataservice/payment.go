@@ -1,9 +1,9 @@
-package postgresql
+package repository
 
 import (
 	"context"
 	"github.com/coins-ph/internal"
-	"github.com/coins-ph/internal/postgresql/db"
+	"github.com/coins-ph/internal/repository/db"
 )
 
 type Payment struct {

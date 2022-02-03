@@ -1,9 +1,9 @@
-package postgresql
+package repository
 
 import (
 	"context"
 	"github.com/coins-ph/internal"
-	"github.com/coins-ph/internal/postgresql/db"
+	"github.com/coins-ph/internal/repository/db"
 	"log"
 )
 
@@ -21,7 +21,7 @@ func (a *Account) Create(ctx context.Context, params internal.Account) (internal
 
 	row, err := a.q.GetAccount(ctx, params.ID)
 	if len(row.ID) > 0 {
-		return internal.Account{}, internal.WrapErrorf(err, internal.ErrorCodeAccountAlreadExist, "Account already exist")
+		return internal.Account{}, internal.ErrAccountAlreadyExist
 	}
 
 	newID, err := a.q.CreateAccount(ctx, db.CreateAccountParams{
@@ -30,7 +30,7 @@ func (a *Account) Create(ctx context.Context, params internal.Account) (internal
 	})
 
 	if err != nil {
-		return internal.Account{}, internal.WrapErrorf(err, internal.ErrorCodeUnknown, "create account")
+		return internal.Account{}, internal.ErrAccountCreation
 	}
 
 	_, err = a.q.TopupAccountBalance(ctx, db.TopupAccountBalanceParams{
@@ -43,14 +43,14 @@ func (a *Account) Create(ctx context.Context, params internal.Account) (internal
 		log.Println(err)
 	}
 
-	return internal.Account{ID: newID, Name: params.Name, Balance: params.Balance, Currency: params.Currency}, nil
+	return internal.Account{ID: newID, Name: params.Name, Balance: params.Balance, Currency: "USD"}, nil
 }
 
 func (a *Account) Get(ctx context.Context, id string) (internal.Account, error) {
 
-	row, err := a.q.GetAccount(ctx, id)
+	row, _ := a.q.GetAccount(ctx, id)
 	if len(row.ID) <= 0 {
-		return internal.Account{}, internal.WrapErrorf(err, internal.ErrorCodeUnknown, "Account does not exist")
+		return internal.Account{}, internal.ErrAccountNotFound
 	}
 
 	return internal.Account{
@@ -68,7 +68,7 @@ func (a *Account) AddBalance(ctx context.Context, id string, balance int64) (int
 	})
 
 	if err != nil {
-		return internal.Account{}, internal.WrapErrorf(err, internal.ErrorCodeUnknown, err.Error())
+		return internal.Account{}, internal.ErrorCodeUnknown
 	}
 
 	return internal.Account{

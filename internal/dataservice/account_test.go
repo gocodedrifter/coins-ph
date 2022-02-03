@@ -1,4 +1,4 @@
-package postgresql_test
+package repository_test
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/coins-ph/internal"
-	"github.com/coins-ph/internal/postgresql"
+	"github.com/coins-ph/internal/repository"
 	migrate "github.com/golang-migrate/migrate/v4"
 	migratepostgres "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -27,7 +27,7 @@ func TestAccount_Create(t *testing.T) {
 	t.Run("Create: OK", func(t *testing.T) {
 		t.Parallel()
 
-		store := postgresql.NewAccount(newDB(t))
+		store := repository.NewAccount(newDB(t))
 		acc, err := store.Create(context.Background(),
 			internal.Account{
 				ID: "dbbjb541",
@@ -62,7 +62,7 @@ func TestAccount_TopupBalance(t *testing.T) {
 	t.Run("TopupBalance : OK", func(t *testing.T) {
 		t.Parallel()
 
-		store := postgresql.NewAccount(newDB(t))
+		store := repository.NewAccount(newDB(t))
 		acc, err := store.Create(context.Background(),
 			internal.Account{
 				ID: "dbbjb541",
