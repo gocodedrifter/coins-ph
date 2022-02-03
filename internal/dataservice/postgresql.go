@@ -1,4 +1,4 @@
-package repository
+package dataservice
 
 import (
 	"database/sql"

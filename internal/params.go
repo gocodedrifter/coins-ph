@@ -1,16 +1,16 @@
 package internal
 
 type Account struct {
-	ID       string
-	Name     string
-	Balance  int64
-	Currency string
+	ID       string `json:"id,omitempty"`
+	Name     string `json:"-,omitempty"`
+	Balance  int64  `json:"balance"`
+	Currency string `json:"currency,omitempty"`
 }
 
 type Payment struct {
-	Account     string
-	Amount      int64
-	FromAccount string
-	ToAccount   string
-	Direction   string
+	Account     string `json:"account,omitempty"`
+	Amount      int64  `json:"amount,omitempty"`
+	FromAccount string `json:"from_account,omitempty"`
+	ToAccount   string `json:"to_account,omitempty"`
+	Direction   string `json:"direction,omitempty"`
 }

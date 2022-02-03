@@ -3,9 +3,12 @@ module github.com/coins-ph
 go 1.16
 
 require (
+	github.com/go-kit/kit v0.9.0
 	github.com/golang-migrate/migrate/v4 v4.15.1
+	github.com/gorilla/mux v1.8.0
 	github.com/jackc/pgconn v1.10.1
 	github.com/jackc/pgx/v4 v4.14.1
+	github.com/joho/godotenv v1.4.0
 	github.com/lib/pq v1.10.4 // indirect
 	github.com/ory/dockertest/v3 v3.8.1
 	go.uber.org/atomic v1.9.0 // indirect

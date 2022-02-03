@@ -1,9 +1,9 @@
-package repository
+package dataservice
 
 import (
 	"context"
 	"github.com/coins-ph/internal"
-	"github.com/coins-ph/internal/repository/db"
+	"github.com/coins-ph/internal/dataservice/db"
 )
 
 type Payment struct {
