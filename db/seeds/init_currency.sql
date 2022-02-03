@@ -1,0 +1,1 @@
+insert into public.currency values ('USD', 'US Dollar')
