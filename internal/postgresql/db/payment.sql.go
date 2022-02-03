@@ -110,3 +110,83 @@ func (q *Queries) ListPaymentsById(ctx context.Context, arg ListPaymentsByIdPara
 	}
 	return items, nil
 }
+
+const paymentAdded = `update public.account_balance set balance = balance + $1  where id = $2`
+const paymentDeducted = `update public.account_balance set balance = balance - $1  where id = $2`
+
+const paymentData_outgoing = `insert into public.payment_data (debit, credit, account_id, last_balance, current_balance, direction, to_account_id)
+values($1, 0, $2, $3, $4, 'outgoing', $5)`
+
+const paymentData_incoming = `insert into public.payment_data (debit, credit, account_id, last_balance, current_balance, direction, from_account_id)
+values(0, $1, $2, $3, $4, 'incoming', $5)`
+
+type PaymentParams struct {
+	Account     string
+	ToAccount   string
+	FromAccount string
+	Amount      sql.NullInt64
+	Direction   string
+}
+
+func (q *Queries) Payment(ctx context.Context, arg PaymentParams) ([]PaymentParams, error) {
+	retry, success := 0, false
+	from_acc, err := q.GetAccount(ctx, arg.Account)
+	if err != nil {
+		return nil, err
+	}
+	to_acc, err := q.GetAccount(ctx, arg.ToAccount)
+	if err != nil {
+		return nil, err
+	}
+	for retry < 3 && !success {
+		tx, err := q.db.Begin(ctx)
+		if err != nil {
+			panic(err.Error())
+			return nil, err
+		}
+		_, err = tx.Exec(ctx, "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE")
+		if err != nil {
+			panic(err.Error())
+		}
+		//from_balance, _ := from_acc.Balance, to_acc.Balance
+
+		if _, err = tx.Exec(ctx, paymentDeducted, arg.Amount, arg.Account); err != nil {
+			return nil, err
+		}
+		if _, err = tx.Exec(ctx, paymentAdded, arg.Amount, arg.ToAccount); err != nil {
+			return nil, err
+		}
+		if _, err = tx.Exec(ctx, paymentData_outgoing, arg.Amount, from_acc.ID,
+			from_acc.Balance, sql.NullInt64{from_acc.Balance.Int64-arg.Amount.Int64, true}, to_acc.ID); err != nil {
+			return nil, err
+		}
+		if _, err = tx.Exec(ctx, paymentData_incoming, arg.Amount, to_acc.ID,
+			to_acc.Balance, sql.NullInt64{to_acc.Balance.Int64+arg.Amount.Int64, true}, from_acc.ID); err != nil {
+			return nil, err
+		}
+
+		if err = tx.Commit(ctx); err != nil {
+			success = false
+			retry++
+		} else {
+			success = true
+		}
+	}
+
+	payments := []PaymentParams{
+		{
+			Account:   arg.Account,
+			Amount:    arg.Amount,
+			ToAccount: arg.ToAccount,
+			Direction: "outgoing",
+		},
+		{
+			Account:     arg.ToAccount,
+			Amount:      arg.Amount,
+			FromAccount: arg.Account,
+			Direction:   "incoming",
+		},
+	}
+
+	return payments, nil
+}

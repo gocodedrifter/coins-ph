@@ -78,4 +78,19 @@ func (a *Account) AddBalance(ctx context.Context, id string, balance int64) (int
 	}, nil
 }
 
-//func (a *Account) TopupBalance(ctx context.Context, params internal)
+func (a *Account) GetAllAccounts(ctx context.Context, offset, limit int32) (accounts []internal.Account, err error) {
+	acc, err := a.q.ListAccounts(ctx, db.ListAccountsParams{
+		Page:   limit,
+		Number: offset,
+	})
+
+	for _, obj := range acc {
+		accounts = append(accounts, internal.Account{
+			ID:       obj.ID,
+			Balance:  obj.Balance.Int64,
+			Currency: obj.Currency.String,
+		})
+	}
+
+	return
+}

@@ -6,3 +6,11 @@ type Account struct {
 	Balance  int64
 	Currency string
 }
+
+type Payment struct {
+	Account     string
+	Amount      int64
+	FromAccount string
+	ToAccount   string
+	Direction   string
+}

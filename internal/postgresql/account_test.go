@@ -28,7 +28,7 @@ func TestAccount_Create(t *testing.T) {
 		t.Parallel()
 
 		store := postgresql.NewAccount(newDB(t))
-		task, err := store.Create(context.Background(),
+		acc, err := store.Create(context.Background(),
 			internal.Account{
 				ID: "dbbjb541",
 				Name: "arip",
@@ -37,11 +37,11 @@ func TestAccount_Create(t *testing.T) {
 			t.Fatalf("expected no error, got %s", err)
 		}
 
-		if task.ID == "" {
+		if acc.ID == "" {
 			t.Fatalf("expected valid record, got empty value")
 		}
 
-		acc, err := store.Get(context.Background(), "dbbjb541")
+		acc, err = store.Get(context.Background(), "dbbjb541")
 		if err != nil {
 			t.Fatalf("expected no error, got %s", err)
 		}

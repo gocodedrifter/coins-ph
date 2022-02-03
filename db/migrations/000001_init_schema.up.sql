@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS public.currency
 
 insert into public.currency values ('USD', 'US Dollar')
 on conflict (id) do nothing;
+
 -- Table: public.account_balance
 
 CREATE TABLE IF NOT EXISTS public.account_balance
