@@ -41,9 +41,9 @@ func MakeHandler(s *PaymentService, logger kitlog.Logger) http.Handler {
 
 	r := mux.NewRouter()
 
+	r.Handle("/wallet/v1/payment/proc/transfer", transferAmount).Methods("POST")
 	r.Handle("/wallet/v1/payment/proc/{id}", getAllPaymentByID).Methods("POST")
 	r.Handle("/wallet/v1/payment/proc", getAllPayment).Methods("POST")
-	r.Handle("/wallet/v1/payment/proc/transfer", transferAmount).Methods("POST")
 	return r
 }
 

@@ -71,8 +71,8 @@ func decodeCreateAccountRequest(_ context.Context, r *http.Request) (interface{}
 
 func decodeAddBalanceRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var body struct {
-		ID      string `json:"id"`
-		Balance int64  `json:"balance"`
+		ID     string `json:"id"`
+		Amount int64  `json:"amount"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
@@ -81,7 +81,7 @@ func decodeAddBalanceRequest(_ context.Context, r *http.Request) (interface{}, e
 
 	return accountBalanceRequest{
 		ID:      body.ID,
-		Balance: body.Balance,
+		Balance: body.Amount,
 	}, nil
 }
 

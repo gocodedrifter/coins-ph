@@ -2,6 +2,7 @@ package dataservice
 
 import (
 	"context"
+	"errors"
 	"github.com/coins-ph/internal"
 	"github.com/coins-ph/internal/dataservice/db"
 	"log"
@@ -61,6 +62,9 @@ func (a *Account) Get(ctx context.Context, id string) (internal.Account, error) 
 }
 
 func (a *Account) AddBalance(ctx context.Context, id string, balance int64) (internal.Account, error)  {
+	if balance <= 0 {
+		return internal.Account{}, errors.New("balance must be greater than zero")
+	}
 	row, err := a.q.TopupAccountBalance(ctx, db.TopupAccountBalanceParams{
 		ID:       id,
 		Balance:  newNullInt64(balance),

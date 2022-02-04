@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/coins-ph/internal"
 	"github.com/coins-ph/internal/dataservice/db"
+	"log"
 )
 
 type Payment struct {
@@ -71,6 +72,7 @@ func (p *Payment) Transfer(ctx context.Context, account, toAccount string, amoun
 	})
 
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 

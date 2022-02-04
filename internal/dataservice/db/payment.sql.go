@@ -6,6 +6,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"errors"
 )
 
 const ListPayments = `-- name: ListPayments :many
@@ -132,14 +133,7 @@ type PaymentParams struct {
 
 func (q *Queries) Payment(ctx context.Context, arg PaymentParams) ([]PaymentParams, error) {
 	retry, success := 0, false
-	from_acc, err := q.GetAccount(ctx, arg.Account)
-	if err != nil {
-		return nil, err
-	}
-	to_acc, err := q.GetAccount(ctx, arg.ToAccount)
-	if err != nil {
-		return nil, err
-	}
+
 	for retry < 3 && !success {
 		tx, err := q.db.Begin(ctx)
 		if err != nil {
@@ -151,6 +145,20 @@ func (q *Queries) Payment(ctx context.Context, arg PaymentParams) ([]PaymentPara
 			panic(err.Error())
 		}
 		//from_balance, _ := from_acc.Balance, to_acc.Balance
+
+		from_acc, err := q.GetAccount(ctx, arg.Account)
+		if err != nil {
+			return nil, err
+		}
+
+		if from_acc.Balance.Int64 < arg.Amount.Int64 {
+			return nil, errors.New("Unsufficient balance from account : "+ from_acc.ID)
+		}
+
+		to_acc, err := q.GetAccount(ctx, arg.ToAccount)
+		if err != nil {
+			return nil, err
+		}
 
 		if _, err = tx.Exec(ctx, paymentDeducted, arg.Amount, arg.Account); err != nil {
 			return nil, err
