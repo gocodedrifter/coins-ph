@@ -32,4 +32,4 @@ Below are the steps to run the application
 
 ## API Documentation
 
-[API ](./doc/API.md#L15-L22)
+[API ](./docs/API.md#L15-L22)
