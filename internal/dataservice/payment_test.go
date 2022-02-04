@@ -17,7 +17,7 @@ func TestPayment_Transfer(t *testing.T) {
 		store := dataservice.NewAccount(pool)
 		acc1, err := store.Create(context.Background(),
 			internal.Account{
-				ID: "dbbjb541",
+				ID:   "dbbjb541",
 				Name: "william",
 			})
 		if err != nil {
@@ -26,7 +26,7 @@ func TestPayment_Transfer(t *testing.T) {
 
 		acc2, err := store.Create(context.Background(),
 			internal.Account{
-				ID: "dbbkb541",
+				ID:   "dbbkb541",
 				Name: "john",
 			})
 		if err != nil {

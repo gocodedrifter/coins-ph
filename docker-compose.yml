@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  db-coins:
+    image: postgres:12.5-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db/migrations/000001_init_schema.up.sql:/docker-entrypoint-initdb.d/000001_init_schema.up.sql
+      - ./db/seeds/init_currency.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: coins
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 2m
+      timeout: 10s
+      retries: 20
+  wallet:
+    build:
+      context: .
+      dockerfile: ./build/wallet/Dockerfile
+    ports:
+      - 8080:8080
+    volumes:
+      - api:/tmp
+    depends_on:
+      db-coins:
+        condition: service_healthy
+    links:
+      - db-coins
+
+volumes:
+  db-coins:
+  api:

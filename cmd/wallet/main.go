@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"github.com/coins-ph/cmd/internal"
@@ -15,19 +16,20 @@ import (
 )
 
 const (
-	defaultPort              = "8080"
+	defaultPort = "8080"
 )
 
 func main() {
-
-	godotenv.Load("../../.env")
 	var (
-		addr  = envString("PORT", defaultPort)
-
-		httpAddr          = flag.String("http.addr", ":"+addr, "HTTP listen address")
+		addr     = envString("PORT", defaultPort)
+		httpAddr = flag.String("http.addr", ":"+addr, "HTTP listen address")
 	)
 
+	var env string
+	flag.StringVar(&env, "env", "", "Environment Variables filename")
 	flag.Parse()
+
+	Load(env)
 
 	var logger log.Logger
 	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
@@ -80,4 +82,12 @@ func envString(env, fallback string) string {
 		return fallback
 	}
 	return e
+}
+
+func Load(filename string) error {
+	if err := godotenv.Load(filename); err != nil {
+		return errors.New("error loading configuration file")
+	}
+
+	return nil
 }

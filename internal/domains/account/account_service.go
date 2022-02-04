@@ -11,7 +11,7 @@ type AccountService struct {
 	*dataservice.Account
 }
 
-func NewAccountService(d db.DBTX) *AccountService{
+func NewAccountService(d db.DBTX) *AccountService {
 	account := dataservice.NewAccount(d)
 	return &AccountService{account}
 }

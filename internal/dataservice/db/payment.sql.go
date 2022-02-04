@@ -152,7 +152,7 @@ func (q *Queries) Payment(ctx context.Context, arg PaymentParams) ([]PaymentPara
 		}
 
 		if from_acc.Balance.Int64 < arg.Amount.Int64 {
-			return nil, errors.New("Unsufficient balance from account : "+ from_acc.ID)
+			return nil, errors.New("Unsufficient balance from account : " + from_acc.ID)
 		}
 
 		to_acc, err := q.GetAccount(ctx, arg.ToAccount)
@@ -167,11 +167,11 @@ func (q *Queries) Payment(ctx context.Context, arg PaymentParams) ([]PaymentPara
 			return nil, err
 		}
 		if _, err = tx.Exec(ctx, paymentData_outgoing, arg.Amount, from_acc.ID,
-			from_acc.Balance, sql.NullInt64{from_acc.Balance.Int64-arg.Amount.Int64, true}, to_acc.ID); err != nil {
+			from_acc.Balance, sql.NullInt64{from_acc.Balance.Int64 - arg.Amount.Int64, true}, to_acc.ID); err != nil {
 			return nil, err
 		}
 		if _, err = tx.Exec(ctx, paymentData_incoming, arg.Amount, to_acc.ID,
-			to_acc.Balance, sql.NullInt64{to_acc.Balance.Int64+arg.Amount.Int64, true}, from_acc.ID); err != nil {
+			to_acc.Balance, sql.NullInt64{to_acc.Balance.Int64 + arg.Amount.Int64, true}, from_acc.ID); err != nil {
 			return nil, err
 		}
 

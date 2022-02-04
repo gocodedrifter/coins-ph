@@ -30,7 +30,7 @@ func TestAccount_Create(t *testing.T) {
 		store := dataservice.NewAccount(newDB(t))
 		acc, err := store.Create(context.Background(),
 			internal.Account{
-				ID: "dbbjb541",
+				ID:   "dbbjb541",
 				Name: "arip",
 			})
 		if err != nil {
@@ -65,7 +65,7 @@ func TestAccount_TopupBalance(t *testing.T) {
 		store := dataservice.NewAccount(newDB(t))
 		acc, err := store.Create(context.Background(),
 			internal.Account{
-				ID: "dbbjb541",
+				ID:   "dbbjb541",
 				Name: "arip",
 			})
 		if err != nil {

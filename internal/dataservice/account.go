@@ -61,7 +61,7 @@ func (a *Account) Get(ctx context.Context, id string) (internal.Account, error) 
 	}, nil
 }
 
-func (a *Account) AddBalance(ctx context.Context, id string, balance int64) (internal.Account, error)  {
+func (a *Account) AddBalance(ctx context.Context, id string, balance int64) (internal.Account, error) {
 	if balance <= 0 {
 		return internal.Account{}, errors.New("balance must be greater than zero")
 	}
