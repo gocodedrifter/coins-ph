@@ -10,11 +10,12 @@ import (
 
 const ListPayments = `-- name: ListPayments :many
 select account_id,
-       case when direction = 'outgoing' then credit else debit end amount,
+       case when direction = 'outgoing' then debit else credit end amount,
        from_account_id,
        to_account_id,
        direction
 from public.payment_data
+order by id desc
 LIMIT $2
 OFFSET $1
 `
@@ -60,13 +61,14 @@ func (q *Queries) ListPayments(ctx context.Context, arg ListPaymentsParams) ([]L
 
 const ListPaymentsById = `-- name: ListPaymentsById :many
 select account_id,
-       case when direction = 'outgoing' then credit else debit end amount,
+       case when direction = 'outgoing' then debit else credit end amount,
        from_account_id,
        to_account_id,
        direction
 from public.payment_data
 where
     account_id = $1
+order by id desc
 LIMIT $3
 OFFSET $2
 `

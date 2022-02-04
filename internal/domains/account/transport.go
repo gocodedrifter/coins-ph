@@ -48,10 +48,10 @@ func MakeHandler(s *AccountService, logger kitlog.Logger) http.Handler {
 
 	r := mux.NewRouter()
 
-	r.Handle("/wallet/v1/account", createAccountHandler).Methods("POST")
-	r.Handle("/wallet/v1/account/all", getAllAccountHandler).Methods("POST")
-	r.Handle("/wallet/v1/account/topup", addBalanceAccountHandler).Methods("POST")
-	r.Handle("/wallet/v1/account/{id}", getAccountHandler).Methods("GET")
+	r.Handle("/wallet/v1/account/proc", createAccountHandler).Methods("POST")
+	r.Handle("/wallet/v1/account/proc/all", getAllAccountHandler).Methods("POST")
+	r.Handle("/wallet/v1/account/proc/topup", addBalanceAccountHandler).Methods("POST")
+	r.Handle("/wallet/v1/account/proc/{id}", getAccountHandler).Methods("GET")
 	return r
 }
 

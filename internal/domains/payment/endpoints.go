@@ -30,6 +30,17 @@ func makePaymentByIdEndpoint(s *PaymentService) endpoint.Endpoint {
 	}
 }
 
+func makeGetAllPaymentEndpoint(s *PaymentService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(getPaymentByIdRequest)
+		resp, err := s.GetAllPayment(ctx, req.Offset, req.Limit)
+		return getPaymentResponse{
+			Err:  err,
+			Data: resp,
+		}, err
+	}
+}
+
 type transferAmountRequest struct {
 	Account   string `json:"account,omitempty"`
 	ToAccount string `json:"to_account,omitempty"`

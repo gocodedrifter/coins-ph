@@ -25,6 +25,13 @@ func MakeHandler(s *PaymentService, logger kitlog.Logger) http.Handler {
 		opts...,
 	)
 
+	getAllPayment := kithttp.NewServer(
+		makeGetAllPaymentEndpoint(s),
+		decodeGetAllPaymentRequest,
+		encodeResponse,
+		opts...,
+	)
+
 	transferAmount := kithttp.NewServer(
 		makeTransferAmountEndpoint(s),
 		decodeTransferAmoountRequest,
@@ -34,16 +41,21 @@ func MakeHandler(s *PaymentService, logger kitlog.Logger) http.Handler {
 
 	r := mux.NewRouter()
 
-	r.Handle("/wallet/v1/payment", getAllPaymentByID).Methods("POST")
-	r.Handle("/wallet/v1/payment/transfer", transferAmount).Methods("POST")
+	r.Handle("/wallet/v1/payment/proc/{id}", getAllPaymentByID).Methods("POST")
+	r.Handle("/wallet/v1/payment/proc", getAllPayment).Methods("POST")
+	r.Handle("/wallet/v1/payment/proc/transfer", transferAmount).Methods("POST")
 	return r
 }
 
 func decodeGetPaymentByIDRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	vars := mux.Vars(r)
+	id, ok := vars["id"]
+	if !ok {
+		return nil, errBadRoute
+	}
 	var body struct {
-		ID     string `json:"id"`
-		Offset int    `json:"offset"`
-		Limit  int    `json:"limit"`
+		Offset int `json:"offset"`
+		Limit  int `json:"limit"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
@@ -51,7 +63,24 @@ func decodeGetPaymentByIDRequest(_ context.Context, r *http.Request) (interface{
 	}
 
 	return getPaymentByIdRequest{
-		ID:     body.ID,
+		ID:     id,
+		Offset: body.Offset,
+		Limit:  body.Limit,
+	}, nil
+}
+
+func decodeGetAllPaymentRequest(_ context.Context, r *http.Request) (interface{}, error) {
+
+	var body struct {
+		Offset int `json:"offset"`
+		Limit  int `json:"limit"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		return nil, err
+	}
+
+	return getPaymentByIdRequest{
 		Offset: body.Offset,
 		Limit:  body.Limit,
 	}, nil

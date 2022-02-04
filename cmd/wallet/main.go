@@ -42,8 +42,8 @@ func main() {
 
 	httpLogger := log.With(logger, "component", "http")
 	mux := http.NewServeMux()
-	mux.Handle("/wallet/v1/account", account.MakeHandler(accountService, httpLogger))
-	mux.Handle("/wallet/v1/payment", payment.MakeHandler(paymentService, httpLogger))
+	mux.Handle("/wallet/v1/account/", account.MakeHandler(accountService, httpLogger))
+	mux.Handle("/wallet/v1/payment/", payment.MakeHandler(paymentService, httpLogger))
 	http.Handle("/", accessControl(mux))
 
 	errs := make(chan error, 2)

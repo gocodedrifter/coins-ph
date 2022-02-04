@@ -6,6 +6,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"log"
 )
 
 const CreateAccount = `-- name: CreateAccount :one
@@ -87,7 +88,8 @@ type ListAccountsRow struct {
 }
 
 func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]ListAccountsRow, error) {
-	rows, err := q.db.Query(ctx, ListAccounts, arg.Page, arg.Number)
+	log.Println(arg.Page, arg.Number)
+	rows, err := q.db.Query(ctx, ListAccounts, arg.Number, arg.Page)
 	if err != nil {
 		return nil, err
 	}
